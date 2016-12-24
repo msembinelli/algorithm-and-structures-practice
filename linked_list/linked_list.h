@@ -6,6 +6,9 @@
  * December 21, 2016
  */
 
+#include <stdlib.h>
+#include <stdbool.h>
+
 // Public function protoypes
 void push_front(int key);
 int pop_front(void);
@@ -19,5 +22,5 @@ int value_at(int index);
 int value_n_from_end(int n);
 void reverse(void);
 void remove_value(int key);
-int size(void);
+int get_size(void);
 bool empty(void);
