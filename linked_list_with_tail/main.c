@@ -131,6 +131,13 @@ int main(void)
 
     print_linked_list(list);
 
+    if(!empty(list))
+    {
+        remove_value(list, 99);
+    }
+
+    print_linked_list(list);
+
     push_front(list, 88);
     push_front(list, 77);
     push_front(list, 66);

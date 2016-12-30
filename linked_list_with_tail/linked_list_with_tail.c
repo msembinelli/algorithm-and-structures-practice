@@ -132,13 +132,13 @@ int pop_back(linked_list* list)
     if(private_list->head == current_node)
     {
         private_list->head = NULL;
-        private_list->tail = NULL;
     }
     else
     {
         previous_node->next = NULL;
-        private_list->tail = previous_node;
     }
+
+    private_list->tail = previous_node;
 
     int key = current_node->key;
     free(current_node);
@@ -299,12 +299,16 @@ void remove_value(linked_list* list, int key)
         current_node = current_node->next;
     }
 
-    previous_node->next = current_node->next;
-
-    if(private_list->tail == current_node)
+    if(private_list->head == current_node)
     {
-        private_list->tail = previous_node;
+        private_list->head = NULL;
     }
+    else
+    {
+        previous_node->next = current_node->next;
+    }
+
+    private_list->tail = previous_node;
 
     free(current_node);
     private_list->size--;
