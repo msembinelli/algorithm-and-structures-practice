@@ -44,7 +44,7 @@ typedef struct
 /*****************************************************************************
  *                             Private Prototypes                            *
  *****************************************************************************/
-static nodes* get_nodes_at_index(linked_list_private* private_list, int index);
+static nodes get_nodes_at_index(linked_list_private* private_list, int index);
 
 /*****************************************************************************
  *                             Public Definitions                            *
@@ -70,6 +70,12 @@ void push_front(linked_list* list, int key)
     new_node->key = key;
     new_node->next = private_list->head;
 
+    // If the list was empty before creating this node, also adjust tail pointer
+    if(empty(list))
+    {
+        private_list->tail = new_node;
+    }
+
     private_list->head = new_node;
     private_list->size++;
 }
@@ -85,7 +91,8 @@ int pop_front(linked_list* list)
     node* delete_node = private_list->head;
     private_list->head = private_list->head->next;
 
-    if(private_list->head == NULL)
+    // If the list is empty now, also set tail to NULL
+    if(empty(list))
     {
         private_list->tail = NULL;
     }
@@ -112,8 +119,8 @@ void push_back(linked_list* list, int key)
     {
         private_list->tail->next = new_node;
     }
-    private_list->tail = new_node;
 
+    private_list->tail = new_node;
     private_list->size++;
 }
 
@@ -124,25 +131,28 @@ int pop_back(linked_list* list)
 
     linked_list_private* private_list = list->private;
 
-    nodes* previous_and_current_nodes =
+    // Traverse to end of linked list to get last element and second last element
+    nodes previous_and_current_nodes =
             get_nodes_at_index(private_list, private_list->size - 1);
-    node* previous_node = previous_and_current_nodes->previous;
-    node* current_node = previous_and_current_nodes->current;
+    node* previous_node = previous_and_current_nodes.previous;
+    node* current_node = previous_and_current_nodes.current;
+
+    int key = current_node->key;
 
     if(private_list->head == current_node)
     {
-        private_list->head = NULL;
+        private_list->head = current_node->next;
     }
     else
     {
-        previous_node->next = NULL;
+        previous_node->next = current_node->next;
     }
 
     private_list->tail = previous_node;
 
-    int key = current_node->key;
     free(current_node);
     private_list->size--;
+
     return key;
 }
 
@@ -170,21 +180,22 @@ void insert(linked_list* list, int index, int key)
 {
     linked_list_private* private_list = list->private;
 
-    // Insert at the very end of the list if desired index is >= list size
+    // Insert at the very end of the list if desired index is >= size, O(1)
     if(index >= private_list->size)
     {
         push_back(list, key);
     }
-    // Else we are inserting at an index somewhere in the middle of the list
+    // Else we are inserting at an index in the middle of the list, O(index)
     else
     {
         node* insert_node = (node*) malloc(sizeof(node));
         insert_node->key = key;
 
-        nodes* previous_and_current_nodes =
+        // Traverse to index in linked list to get list[index] and list[index-1]
+        nodes previous_and_current_nodes =
                 get_nodes_at_index(private_list, index);
-        node* previous_node = previous_and_current_nodes->previous;
-        node* current_node = previous_and_current_nodes->current;
+        node* previous_node = previous_and_current_nodes.previous;
+        node* current_node = previous_and_current_nodes.current;
 
         if(private_list->head == current_node)
         {
@@ -207,31 +218,29 @@ void erase(linked_list* list, int index)
 
     linked_list_private* private_list = list->private;
 
-    // Erase at the very end of the list if desired index is >= list size
-    if(index >= private_list->size - 1)
+    // We are erasing at an index in the middle of the list, O(index)
+    nodes previous_and_current_nodes =
+            get_nodes_at_index(private_list, index);
+    node* previous_node = previous_and_current_nodes.previous;
+    node* current_node = previous_and_current_nodes.current;
+
+    if(private_list->head == current_node)
     {
-        pop_back(list);
+        private_list->head = current_node->next;
     }
-    // Else we are erasing at an index somewhere in the middle of the list
     else
     {
-        nodes* previous_and_current_nodes =
-                get_nodes_at_index(private_list, index);
-        node* previous_node = previous_and_current_nodes->previous;
-        node* current_node = previous_and_current_nodes->current;
-
-        if(private_list->head == current_node)
-        {
-            private_list->head = current_node->next;
-        }
-        else
-        {
-            previous_node->next = current_node->next;
-        }
-
-        free(current_node);
-        private_list->size--;
+        previous_node->next = current_node->next;
     }
+
+    // If we are erasing the tail element, we need to adjust the tail
+    if(private_list->tail == current_node)
+    {
+        private_list->tail = previous_node;
+    }
+
+    free(current_node);
+    private_list->size--;
 }
 
 int value_at(linked_list* list, int index)
@@ -241,7 +250,7 @@ int value_at(linked_list* list, int index)
 
     linked_list_private* private_list = list->private;
 
-    return get_nodes_at_index(private_list, index)->current->key;
+    return get_nodes_at_index(private_list, index).current->key;
 }
 
 int value_n_from_end(linked_list* list, int n)
@@ -252,7 +261,7 @@ int value_n_from_end(linked_list* list, int n)
     linked_list_private* private_list = list->private;
 
     return get_nodes_at_index(private_list,
-            ((private_list->size - 1) - n))->current->key;
+            ((private_list->size - 1) - n)).current->key;
 }
 
 void reverse(linked_list* list)
@@ -301,7 +310,7 @@ void remove_value(linked_list* list, int key)
 
     if(private_list->head == current_node)
     {
-        private_list->head = NULL;
+        private_list->head = current_node->next;
     }
     else
     {
@@ -335,7 +344,7 @@ void destroy(linked_list* list)
 }
 
 // Private function definitions
-static nodes* get_nodes_at_index(linked_list_private* private_list, int index)
+static nodes get_nodes_at_index(linked_list_private* private_list, int index)
 {
     node* current = private_list->head;
     node* previous = NULL;
@@ -350,9 +359,9 @@ static nodes* get_nodes_at_index(linked_list_private* private_list, int index)
         current = current->next;
     }
 
-    nodes* return_nodes = (nodes*) malloc(sizeof(nodes));
-    return_nodes->current = current;
-    return_nodes->previous = previous;
+    nodes return_nodes;
+    return_nodes.current = current;
+    return_nodes.previous = previous;
 
     return return_nodes;
 }

@@ -21,7 +21,7 @@ void print_linked_list(linked_list* list)
 {
     if(empty(list))
     {
-        printf("h -> null\n");
+        printf("h -> null <- t\n");
         return;
     }
     printf("h ");
@@ -29,13 +29,17 @@ void print_linked_list(linked_list* list)
     {
         printf("-> %d ", value_at(list, i));
     }
-    printf("\n");
+    printf("<- t\n");
     fflush(stdout);
 }
 
 int main(void)
 {
     linked_list* list = init();
+    push_front(list, 5);
+
+    print_linked_list(list);
+
     push_back(list, 2);
     if(!empty(list))
     {
