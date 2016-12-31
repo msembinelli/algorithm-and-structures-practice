@@ -11,9 +11,9 @@
 #include <stdio.h>
 #include "resizing_array.h"
 
-void print_item(int item)
+void print(int data)
 {
-    printf("item: %d\n", item);
+    printf("print: %d\n", data);
     fflush(stdout);
 }
 
@@ -36,6 +36,12 @@ int main(void)
 {
     r_array* arr = init();
 
+    print(capacity(arr));
+
+    insert(arr, 0, 1);
+
+    print_array(arr);
+
     push(arr, 1);
     insert(arr, 1, 11);
     prepend(arr, 0);
@@ -46,7 +52,7 @@ int main(void)
 
     print_array(arr);
 
-    print_item(pop(arr));
+    print(pop(arr));
 
     print_array(arr);
 
@@ -71,11 +77,38 @@ int main(void)
 
     print_array(arr);
 
-    print_item(find(arr, 6666));
+    print(find(arr, 6666));
+
+    print(capacity(arr));
 
     remove_item(arr, 0);
     remove_item(arr, 2);
     remove_item(arr, 0xFF);
+
+    print(capacity(arr));
+
+    print_array(arr);
+
+    delete(arr, 0);
+    delete(arr, 0);
+    delete(arr, 0);
+    delete(arr, 0);
+
+    print_array(arr);
+    print(size(arr));
+
+    print(at(arr, 2));
+
+    delete(arr, 0);
+    delete(arr, 0);
+    delete(arr, 0);
+    delete(arr, 0);
+
+    print(capacity(arr));
+
+    print_array(arr);
+
+    pop(arr);
 
     print_array(arr);
 
