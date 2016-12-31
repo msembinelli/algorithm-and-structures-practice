@@ -1,155 +1,132 @@
-/*
- * linked_list.c
+/*****************************************************************************
+ * linked_list.h
  * This file implements the various methods of a singly linked list.
  *
  * Matthew Sembinelli
  * December 21, 2016
- */
+ *****************************************************************************/
 
+/*****************************************************************************
+ *                                 Includes                                  *
+ *****************************************************************************/
 #include <assert.h>
 #include "linked_list.h"
 
-#define PREVIOUS_NODE_ARRAY_INDEX ( 0 )
-#define CURRENT_NODE_ARRAY_INDEX  ( 1 )
+/*****************************************************************************
+ *                                  Types                                    *
+ *****************************************************************************/
+// Forward declaration of node
+typedef struct node node;
 
+// Used for iterating through the linked list to get previous and current nodes
+typedef struct
+{
+    node* previous;
+    node* current;
+} nodes;
+
+// Private node structure representation for a linked list element
 struct node
 {
     int key;
-    struct node* next;
+    node* next;
 };
 
-static struct node* m_head = NULL;
-static int m_size = 0;
-
-// Private function prototypes
-static struct node** get_nodes_at_index(int index);
-static struct node* get_last(void);
-
-// Public function definitions
-void push_front(int key)
+// Private linked list structure
+typedef struct
 {
-    struct node* new_node = (struct node*) malloc(sizeof(struct node));
-    new_node->key = key;
-    new_node->next = m_head;
-    m_head = new_node;
-    m_size++;
+    node* head;
+    int size;
+} linked_list_private;
+
+/*****************************************************************************
+ *                             Private Prototypes                            *
+ *****************************************************************************/
+static nodes get_nodes_at_index(linked_list_private* private_list, int index);
+
+/*****************************************************************************
+ *                             Public Definitions                            *
+ *****************************************************************************/
+linked_list* init(void)
+{
+    linked_list_private* list_private = (linked_list_private*) malloc(sizeof(linked_list_private));
+    list_private->head = NULL;
+    list_private->size = 0;
+
+    linked_list* list = (linked_list*) malloc(sizeof(linked_list));
+    list->private = list_private;
+
+    return list;
 }
 
-int pop_front(void)
+void push_front(linked_list* list, int key)
 {
-    // Assert if the list is empty. Checking if the list is empty is a precondition of the consumer.
-    assert(!empty());
+    linked_list_private* private_list = list->private;
 
-    int key = m_head->key;
-    struct node* delete_node = m_head;
-    m_head = m_head->next;
+    node* new_node = (node*) malloc(sizeof(node));
+    new_node->key = key;
+    new_node->next = private_list->head;
+
+    private_list->head = new_node;
+    private_list->size++;
+}
+
+int pop_front(linked_list* list)
+{
+    // Assert if the list is empty. Empty check is a precondition.
+    assert(!empty(list));
+
+    linked_list_private* private_list = list->private;
+
+    int key = private_list->head->key;
+    node* delete_node = private_list->head;
+    private_list->head = private_list->head->next;
+
     free(delete_node);
-    m_size--;
+    private_list->size--;
+
     return key;
 }
 
-void push_back(int key)
+void push_back(linked_list* list, int key)
 {
-    struct node* new_node = (struct node*) malloc(sizeof(struct node));
+    linked_list_private* private_list = list->private;
+
+    node* new_node = (node*) malloc(sizeof(node));
     new_node->key = key;
     new_node->next = NULL;
 
-    if(empty())
+    if(empty(list))
     {
-        m_head = new_node;
+        private_list->head = new_node;
     }
     else
     {
-        get_last()->next = new_node;
+        node* last_node = get_nodes_at_index(private_list, (private_list->size - 1)).current;
+        last_node->next = new_node;
     }
-    m_size++;
+
+    private_list->size++;
 }
 
-int pop_back(void)
+int pop_back(linked_list* list)
 {
-    // Assert if the list is empty. Checking if the list is empty is a precondition of the consumer.
-    assert(!empty());
+    // Assert if the list is empty. Empty check is a precondition.
+    assert(!empty(list));
 
-    struct node** previous_and_current_nodes = get_nodes_at_index(m_size - 1);
-    struct node* previous_node = previous_and_current_nodes[PREVIOUS_NODE_ARRAY_INDEX];
-    struct node* current_node = previous_and_current_nodes[CURRENT_NODE_ARRAY_INDEX];
+    linked_list_private* private_list = list->private;
 
-    if(m_head == current_node)
-    {
-        m_head = NULL;
-    }
-    else
-    {
-        previous_node->next = NULL;
-    }
+    // Traverse to end of linked list to get last element and second last element
+    nodes previous_and_current_nodes =
+            get_nodes_at_index(private_list, private_list->size - 1);
+    node* previous_node = previous_and_current_nodes.previous;
+    node* current_node = previous_and_current_nodes.current;
 
     int key = current_node->key;
-    free(current_node);
-    m_size--;
-    return key;
-}
 
-int front(void)
-{
-    // Assert if the list is empty. Checking if the list is empty is a precondition of the consumer.
-    assert(!empty());
-    return m_head->key;
-}
-
-int back(void)
-{
-    // Assert if the list is empty. Checking if the list is empty is a precondition of the consumer.
-    assert(!empty());
-    return get_last()->key;
-}
-
-void insert(int index, int key)
-{
-    struct node* insert_node = (struct node*) malloc(sizeof(struct node));
-    insert_node->key = key;
-
-    // Insert at the very end of the list if desired index is >= list size
-    if(index >= m_size)
+    if(private_list->head == current_node)
     {
-        insert_node->next = NULL;
-        get_last()->next = insert_node;
-    }
-    // Else we are inserting at an index that already exists
-    else
-    {
-        struct node** previous_and_current_nodes = get_nodes_at_index(index);
-        struct node* previous_node = previous_and_current_nodes[PREVIOUS_NODE_ARRAY_INDEX];
-        struct node* current_node = previous_and_current_nodes[CURRENT_NODE_ARRAY_INDEX];
-
-        if(m_head == current_node)
-        {
-            m_head = insert_node;
-            insert_node->next = current_node;
-        }
-        else
-        {
-            insert_node->next = current_node;
-            previous_node->next = insert_node;
-        }
-    }
-
-    m_size++;
-}
-
-void erase(int index)
-{
-    if(empty())
-    {
-        return;
-    }
-
-    struct node** previous_and_current_nodes = get_nodes_at_index(index);
-    struct node* previous_node = previous_and_current_nodes[PREVIOUS_NODE_ARRAY_INDEX];
-    struct node* current_node = previous_and_current_nodes[CURRENT_NODE_ARRAY_INDEX];
-
-    if(m_head == current_node)
-    {
-        m_head = current_node->next;
+        private_list->head = current_node->next;
     }
     else
     {
@@ -157,33 +134,123 @@ void erase(int index)
     }
 
     free(current_node);
-    m_size--;
+    private_list->size--;
+
+    return key;
 }
 
-int value_at(int index)
+int front(linked_list* list)
 {
-    // Assert if the list is empty. Checking if the list is empty is a precondition of the consumer.
-    assert(!empty());
-    return get_nodes_at_index(index)[CURRENT_NODE_ARRAY_INDEX]->key;
+    // Assert if the list is empty. Empty check is a precondition.
+    assert(!empty(list));
+
+    linked_list_private* private_list = list->private;
+
+    return private_list->head->key;
 }
 
-int value_n_from_end(int n)
+int back(linked_list* list)
 {
-    // Assert if the list is empty. Checking if the list is empty is a precondition of the consumer.
-    assert(!empty());
-    return get_nodes_at_index(((m_size - 1) - n))[CURRENT_NODE_ARRAY_INDEX]->key;
+    // Assert if the list is empty. Empty check is a precondition.
+    assert(!empty(list));
+
+    linked_list_private* private_list = list->private;
+
+    return get_nodes_at_index(private_list, (private_list->size - 1)).current->key;
 }
 
-void reverse(void)
+void insert(linked_list* list, int index, int key)
 {
-    if(empty())
+    linked_list_private* private_list = list->private;
+
+    // Insert at the very end of the list if desired index is >= size
+    if(index >= private_list->size)
     {
-        return;
+        push_back(list, key);
+    }
+    // Else we are inserting at an index in the middle of the list, O(index)
+    else
+    {
+        node* insert_node = (node*) malloc(sizeof(node));
+        insert_node->key = key;
+
+        // Traverse to index in linked list to get list[index] and list[index-1]
+        nodes previous_and_current_nodes =
+                get_nodes_at_index(private_list, index);
+        node* previous_node = previous_and_current_nodes.previous;
+        node* current_node = previous_and_current_nodes.current;
+
+        if(private_list->head == current_node)
+        {
+            private_list->head = insert_node;
+            insert_node->next = current_node;
+        }
+        else
+        {
+            insert_node->next = current_node;
+            previous_node->next = insert_node;
+        }
+        private_list->size++;
+    }
+}
+
+void erase(linked_list* list, int index)
+{
+    // Assert if the list is empty. Empty check is a precondition.
+    assert(!empty(list));
+
+    linked_list_private* private_list = list->private;
+
+    // We are erasing at an index in the middle of the list, O(index)
+    nodes previous_and_current_nodes =
+            get_nodes_at_index(private_list, index);
+    node* previous_node = previous_and_current_nodes.previous;
+    node* current_node = previous_and_current_nodes.current;
+
+    if(private_list->head == current_node)
+    {
+        private_list->head = current_node->next;
+    }
+    else
+    {
+        previous_node->next = current_node->next;
     }
 
-    struct node* previous_node = NULL;
-    struct node* current_node = m_head;
-    struct node* next_node = NULL;
+    free(current_node);
+    private_list->size--;
+}
+
+int value_at(linked_list* list, int index)
+{
+    // Assert if the list is empty. Empty check is a precondition.
+    assert(!empty(list));
+
+    linked_list_private* private_list = list->private;
+
+    return get_nodes_at_index(private_list, index).current->key;
+}
+
+int value_n_from_end(linked_list* list, int n)
+{
+    // Assert if the list is empty. Empty check is a precondition.
+    assert(!empty(list));
+
+    linked_list_private* private_list = list->private;
+
+    return get_nodes_at_index(private_list,
+            ((private_list->size - 1) - n)).current->key;
+}
+
+void reverse(linked_list* list)
+{
+    // Assert if the list is empty. Empty check is a precondition.
+    assert(!empty(list));
+
+    linked_list_private* private_list = list->private;
+
+    node* previous_node = NULL;
+    node* current_node = private_list->head;
+    node* next_node = NULL;
 
     while(NULL != current_node)
     {
@@ -193,18 +260,18 @@ void reverse(void)
         current_node = next_node;
     }
 
-    m_head = previous_node;
+    private_list->head = previous_node;
 }
 
-void remove_value(int key)
+void remove_value(linked_list* list, int key)
 {
-    if(empty())
-    {
-        return;
-    }
+    // Assert if the list is empty. Empty check is a precondition.
+    assert(!empty(list));
 
-    struct node* current_node = m_head;
-    struct node* previous_node = NULL;
+    linked_list_private* private_list = list->private;
+
+    node* current_node = private_list->head;
+    node* previous_node = NULL;
 
     while(key != current_node->key)
     {
@@ -216,55 +283,59 @@ void remove_value(int key)
         current_node = current_node->next;
     }
 
-    previous_node->next = current_node->next;
+    if(private_list->head == current_node)
+    {
+        private_list->head = current_node->next;
+    }
+    else
+    {
+        previous_node->next = current_node->next;
+    }
+
     free(current_node);
-    m_size--;
+    private_list->size--;
 }
 
-int get_size(void)
+int get_size(linked_list* list)
 {
-    return m_size;
+    linked_list_private* private_list = list->private;
+    return private_list->size;
 }
 
-bool empty(void)
+bool empty(linked_list* list)
 {
-    return (NULL == m_head);
+    linked_list_private* private_list = list->private;
+    return (NULL == private_list->head);
+}
+
+void destroy(linked_list* list)
+{
+    free(list->private);
+    list->private = NULL;
+    free(list);
+    list = NULL;
 }
 
 // Private function definitions
-static struct node** get_nodes_at_index(int index)
+static nodes get_nodes_at_index(linked_list_private* private_list, int index)
 {
-    struct node** return_nodes = (struct node**) malloc(sizeof(struct node*));
-    struct node* current_node = m_head;
-    struct node* previous_node = NULL;
+    node* current = private_list->head;
+    node* previous = NULL;
+
     for(int current_index = 0; current_index < index; current_index++)
     {
-        if(NULL == current_node->next)
+        if(NULL == current->next)
         {
             break;
         }
-        previous_node = current_node;
-        current_node = current_node->next;
+        previous = current;
+        current = current->next;
     }
-    return_nodes[0] = previous_node;
-    return_nodes[1] = current_node;
+
+    nodes return_nodes;
+    return_nodes.current = current;
+    return_nodes.previous = previous;
+
     return return_nodes;
-}
-
-static struct node* get_last(void)
-{
-    struct node* current_node = m_head;
-
-    if(empty())
-    {
-        return m_head;
-    }
-
-    while(NULL != current_node->next)
-    {
-        current_node = current_node->next;
-    }
-
-    return current_node;
 }
 

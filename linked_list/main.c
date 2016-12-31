@@ -17,17 +17,17 @@ void print_key(int key)
     fflush(stdout);
 }
 
-void print_linked_list(void)
+void print_linked_list(linked_list* list)
 {
-    if(empty())
+    if(empty(list))
     {
-        printf("h -> null\n");
+        printf("h --> null\n");
         return;
     }
-    printf("h ");
-    for(int i = 0; i < get_size(); i++)
+    printf("h -");
+    for(int i = 0; i < get_size(list); i++)
     {
-        printf("-> %d ", value_at(i));
+        printf("-> %d ", value_at(list, i));
     }
     printf("\n");
     fflush(stdout);
@@ -35,108 +35,141 @@ void print_linked_list(void)
 
 int main(void)
 {
-    push_back(2);
-    if(!empty())
+    linked_list* list = init();
+
+    push_front(list, 5);
+
+    print_linked_list(list);
+
+    push_back(list, 2);
+
+    print_linked_list(list);
+
+    if(!empty(list))
     {
-        print_key(pop_back());
+        print_key(pop_back(list));
     }
 
-    print_linked_list();
+    print_linked_list(list);
 
-    push_back(3);
-    if(!empty())
+    push_back(list, 3);
+
+    print_linked_list(list);
+
+    if(!empty(list))
     {
-        print_key(pop_front());
+        print_key(pop_front(list));
     }
 
-    print_linked_list();
+    print_linked_list(list);
 
-    push_back(11);
-    push_back(10);
+    push_back(list, 11);
+    push_back(list, 10);
 
-    print_linked_list();
+    print_linked_list(list);
 
-    push_front(5);
-    push_front(22);
-    push_front(100);
+    push_front(list, 5);
+    push_front(list, 22);
+    push_front(list, 100);
 
-    print_linked_list();
+    print_linked_list(list);
 
-    print_key(value_at(2));
-    print_key(front());
-    print_key(back());
+    print_key(value_at(list, 2));
+    print_key(front(list));
+    print_key(back(list));
 
-    if(!empty())
+    if(!empty(list))
     {
-        erase(0);
+        erase(list, 0);
+        erase(list, 0);
+        erase(list, 0);
     }
 
-    print_linked_list();
+    print_linked_list(list);
 
-    if(!empty())
+    if(!empty(list))
     {
-        erase(-1);
+        erase(list, -1);
     }
 
-    print_linked_list();
+    print_linked_list(list);
 
-    if(!empty())
+    if(!empty(list))
     {
-        erase(100);
+        erase(list, 100);
     }
 
-    print_linked_list();
+    print_linked_list(list);
 
-    insert(0, 99);
+    insert(list, 0, 99);
 
-    print_linked_list();
+    print_linked_list(list);
 
-    insert(100, 555);
-    print_linked_list();
+    insert(list, 100, 555);
+    print_linked_list(list);
 
-    insert(2, 111);
+    insert(list, 2, 111);
 
-    print_linked_list();
+    print_linked_list(list);
 
-    if(!empty())
+    if(!empty(list))
     {
-        erase(2);
+        erase(list, 2);
     }
 
-    print_linked_list();
+    print_linked_list(list);
 
-    print_key(value_at(100));
-    print_key(value_at(-1));
-    print_key(value_n_from_end(100));
-    print_key(value_n_from_end(1));
-    print_key(value_n_from_end(-1));
-    insert(100, 555);
+    print_key(value_at(list, 100));
+    print_key(value_at(list, 1));
+    print_key(value_at(list, -1));
+    print_key(value_n_from_end(list, 100));
+    print_key(value_n_from_end(list, 1));
+    print_key(value_n_from_end(list, -1));
 
-    print_linked_list();
+    insert(list, 100, 555);
 
-    if(!empty())
+    print_linked_list(list);
+
+    if(!empty(list))
     {
-        remove_value(555);
+        remove_value(list, 555);
     }
 
-    print_linked_list();
+    print_linked_list(list);
 
-    if(!empty())
+    if(!empty(list))
     {
-        remove_value(555);
+        remove_value(list, 555);
     }
 
-    print_linked_list();
+    print_linked_list(list);
 
-    push_front(88);
-    push_front(77);
-    push_front(66);
+    if(!empty(list))
+    {
+        remove_value(list, 99);
+    }
 
-    print_linked_list();
+    print_linked_list(list);
 
-    reverse();
+    push_front(list, 88);
+    push_front(list, 77);
+    push_front(list, 66);
 
-    print_linked_list();
+    print_linked_list(list);
+
+    reverse(list);
+
+    print_linked_list(list);
+
+    if(!empty(list))
+    {
+        erase(list, 2);
+    }
+
+    print_linked_list(list);
+
+    destroy(list);
 
     return 0;
 }
+
