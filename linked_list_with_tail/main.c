@@ -21,26 +21,30 @@ void print_linked_list(linked_list* list)
 {
     if(empty(list))
     {
-        printf("h -> null <- t\n");
+        printf("h --> null <-- t\n");
         return;
     }
-    printf("h ");
+    printf("h -");
     for(int i = 0; i < get_size(list); i++)
     {
         printf("-> %d ", value_at(list, i));
     }
-    printf("<- t\n");
+    printf("<-- t\n");
     fflush(stdout);
 }
 
 int main(void)
 {
     linked_list* list = init();
+
     push_front(list, 5);
 
     print_linked_list(list);
 
     push_back(list, 2);
+
+    print_linked_list(list);
+
     if(!empty(list))
     {
         print_key(pop_back(list));
@@ -49,6 +53,9 @@ int main(void)
     print_linked_list(list);
 
     push_back(list, 3);
+
+    print_linked_list(list);
+
     if(!empty(list))
     {
         print_key(pop_front(list));
@@ -113,10 +120,12 @@ int main(void)
     print_linked_list(list);
 
     print_key(value_at(list, 100));
+    print_key(value_at(list, 1));
     print_key(value_at(list, -1));
     print_key(value_n_from_end(list, 100));
     print_key(value_n_from_end(list, 1));
     print_key(value_n_from_end(list, -1));
+
     insert(list, 100, 555);
 
     print_linked_list(list);
