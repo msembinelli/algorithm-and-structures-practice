@@ -1,23 +1,33 @@
-/*
+/*****************************************************************************
  * resizing_array.c
  * This file implements the various methods of a dynamically resizable array.
  *
  * Matthew Sembinelli
  * December 24, 2016
- */
+ *****************************************************************************/
 
+/*****************************************************************************
+ *                                 Includes                                  *
+ *****************************************************************************/
 #include <assert.h>
 #include <string.h>
 #include "resizing_array.h"
 
+/*****************************************************************************
+ *                                  Macros                                   *
+ *****************************************************************************/
 #define INIT_CAPACITY ( 16 )
 #define RESIZE_FACTOR ( 2 ) // Size to increase/decrease the dynamic capacity of the array
 #define DECREASE_TRIGGER ( 4 ) // When size is 1/4 of the capacity, shrink the dynamic capacity
 
-// Private function prototypes
+/*****************************************************************************
+ *                             Private Prototypes                            *
+ *****************************************************************************/
 static void resize(r_array* arr, int new_capacity);
 
-// Public function definitions
+/*****************************************************************************
+ *                             Public Definitions                            *
+ *****************************************************************************/
 r_array* init(void)
 {
     r_array* return_arr = (r_array*) malloc(sizeof(r_array));
