@@ -49,7 +49,7 @@ queue* init(int capacity)
 void enqueue(queue* q, int data)
 {
     // Null check
-    assert(q);
+    assert(q && q->private);
 
     queue_private* q_p = q->private;
 
@@ -64,7 +64,7 @@ void enqueue(queue* q, int data)
 int dequeue(queue* q)
 {
     // Null check
-    assert(q);
+    assert(q && q->private);
 
     queue_private* q_p = q->private;
 
@@ -80,7 +80,7 @@ int dequeue(queue* q)
 bool empty(queue* q)
 {
     // Null check
-    assert(q);
+    assert(q && q->private);
 
     queue_private* q_p = q->private;
     return (!q_p->size);
@@ -89,7 +89,7 @@ bool empty(queue* q)
 bool full(queue* q)
 {
     // Null check
-    assert(q);
+    assert(q && q->private);
 
     queue_private* q_p = q->private;
     return (q_p->size == q_p->capacity);
@@ -98,7 +98,7 @@ bool full(queue* q)
 void destroy(queue* q)
 {
     // Null check
-    assert(q);
+    assert(q && q->private);
 
     queue_private* q_p = q->private;
     free(q_p->buffer);

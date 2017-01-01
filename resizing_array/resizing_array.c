@@ -40,21 +40,33 @@ r_array* init(void)
 
 int size(r_array* arr)
 {
+    // Null check
+    assert(arr);
+
     return arr->size;
 }
 
 int capacity(r_array* arr)
 {
+    // Null check
+    assert(arr);
+
     return arr->capacity;
 }
 
 bool is_empty(r_array* arr)
 {
+    // Null check
+    assert(arr);
+
     return (0 == arr->size);
 }
 
 int at(r_array* arr, int index)
 {
+    // Null check
+    assert(arr);
+
     // blow up if the index is OOB
     assert((index < arr->size) && (index >= 0));
     return *(arr->data + index);
@@ -62,6 +74,9 @@ int at(r_array* arr, int index)
 
 void push(r_array* arr, int item)
 {
+    // Null check
+    assert(arr);
+
     if(arr->size == arr->capacity)
     {
         resize(arr, (arr->capacity * RESIZE_FACTOR));
@@ -73,6 +88,9 @@ void push(r_array* arr, int item)
 
 void insert(r_array* arr, int index, int item)
 {
+    // Null check
+    assert(arr);
+
     // blow up if the index is OOB
     assert((index <= arr->size) && (index >= 0));
 
@@ -88,12 +106,18 @@ void insert(r_array* arr, int index, int item)
 
 void prepend(r_array* arr, int item)
 {
+    // Null check
+    assert(arr);
+
     // Prepend is the same as inserting at index 0
     insert(arr, 0, item);
 }
 
 int pop(r_array* arr)
 {
+    // Null check
+    assert(arr);
+
     int return_item = *(arr->data + arr->size - 1);
     arr->size--;
 
@@ -107,6 +131,9 @@ int pop(r_array* arr)
 
 void delete(r_array* arr, int index)
 {
+    // Null check
+    assert(arr);
+
     // blow up if the index is OOB
     assert((index < arr->size) && (index >= 0));
 
@@ -121,6 +148,9 @@ void delete(r_array* arr, int index)
 
 int find(r_array* arr, int item)
 {
+    // Null check
+    assert(arr);
+
     for(int index = 0; index < arr->size; index++)
     {
         if(*(arr->data + index) == item)
@@ -133,6 +163,9 @@ int find(r_array* arr, int item)
 
 void remove_item(r_array* arr, int item)
 {
+    // Null check
+    assert(arr);
+
     int item_occurred = 0;
     for(int index = 0; index < arr->size; index++)
     {
@@ -150,13 +183,22 @@ void remove_item(r_array* arr, int item)
 
 void destroy(r_array* arr)
 {
+    // Null check
+    assert(arr);
+
     free(arr->data);
     free(arr);
     arr = NULL;
 }
 
+/*****************************************************************************
+ *                            Private Definitions                            *
+ *****************************************************************************/
 static void resize(r_array* arr, int new_capacity)
 {
+    // Null check
+    assert(arr);
+
     arr->data = (int*) realloc(arr->data, sizeof(int) * new_capacity);
     arr->capacity = new_capacity;
 }

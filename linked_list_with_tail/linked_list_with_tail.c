@@ -64,6 +64,9 @@ linked_list* init(void)
 
 void push_front(linked_list* list, int key)
 {
+    // Null check
+    assert(list && list->private);
+
     linked_list_private* private_list = list->private;
 
     node* new_node = (node*) malloc(sizeof(node));
@@ -82,6 +85,9 @@ void push_front(linked_list* list, int key)
 
 int pop_front(linked_list* list)
 {
+    // Null check
+    assert(list && list->private);
+
     // Assert if the list is empty. Empty check is a precondition.
     assert(!empty(list));
 
@@ -105,6 +111,9 @@ int pop_front(linked_list* list)
 
 void push_back(linked_list* list, int key)
 {
+    // Null check
+    assert(list && list->private);
+
     linked_list_private* private_list = list->private;
 
     node* new_node = (node*) malloc(sizeof(node));
@@ -126,6 +135,9 @@ void push_back(linked_list* list, int key)
 
 int pop_back(linked_list* list)
 {
+    // Null check
+    assert(list && list->private);
+
     // Assert if the list is empty. Empty check is a precondition.
     assert(!empty(list));
 
@@ -158,6 +170,9 @@ int pop_back(linked_list* list)
 
 int front(linked_list* list)
 {
+    // Null check
+    assert(list && list->private);
+
     // Assert if the list is empty. Empty check is a precondition.
     assert(!empty(list));
 
@@ -168,6 +183,9 @@ int front(linked_list* list)
 
 int back(linked_list* list)
 {
+    // Null check
+    assert(list && list->private);
+
     // Assert if the list is empty. Empty check is a precondition.
     assert(!empty(list));
 
@@ -178,6 +196,9 @@ int back(linked_list* list)
 
 void insert(linked_list* list, int index, int key)
 {
+    // Null check
+    assert(list && list->private);
+
     linked_list_private* private_list = list->private;
 
     // Insert at the very end of the list if desired index is >= size, O(1)
@@ -213,6 +234,9 @@ void insert(linked_list* list, int index, int key)
 
 void erase(linked_list* list, int index)
 {
+    // Null check
+    assert(list && list->private);
+
     // Assert if the list is empty. Empty check is a precondition.
     assert(!empty(list));
 
@@ -245,6 +269,9 @@ void erase(linked_list* list, int index)
 
 int value_at(linked_list* list, int index)
 {
+    // Null check
+    assert(list && list->private);
+
     // Assert if the list is empty. Empty check is a precondition.
     assert(!empty(list));
 
@@ -255,6 +282,9 @@ int value_at(linked_list* list, int index)
 
 int value_n_from_end(linked_list* list, int n)
 {
+    // Null check
+    assert(list && list->private);
+
     // Assert if the list is empty. Empty check is a precondition.
     assert(!empty(list));
 
@@ -266,6 +296,9 @@ int value_n_from_end(linked_list* list, int n)
 
 void reverse(linked_list* list)
 {
+    // Null check
+    assert(list && list->private);
+
     // Assert if the list is empty. Empty check is a precondition.
     assert(!empty(list));
 
@@ -290,6 +323,9 @@ void reverse(linked_list* list)
 
 void remove_value(linked_list* list, int key)
 {
+    // Null check
+    assert(list && list->private);
+
     // Assert if the list is empty. Empty check is a precondition.
     assert(!empty(list));
 
@@ -325,18 +361,27 @@ void remove_value(linked_list* list, int key)
 
 int get_size(linked_list* list)
 {
+    // Null check
+    assert(list && list->private);
+
     linked_list_private* private_list = list->private;
     return private_list->size;
 }
 
 bool empty(linked_list* list)
 {
+    // Null check
+    assert(list && list->private);
+
     linked_list_private* private_list = list->private;
     return (NULL == private_list->head);
 }
 
 void destroy(linked_list* list)
 {
+    // Null check
+    assert(list && list->private);
+
     free(list->private);
     list->private = NULL;
     free(list);
@@ -346,6 +391,9 @@ void destroy(linked_list* list)
 // Private function definitions
 static nodes get_nodes_at_index(linked_list_private* private_list, int index)
 {
+    // Null check
+    assert(private_list);
+
     node* current = private_list->head;
     node* previous = NULL;
 

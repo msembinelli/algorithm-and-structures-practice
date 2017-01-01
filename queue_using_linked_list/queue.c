@@ -40,24 +40,36 @@ queue* init_queue(void)
 
 void enqueue(queue* q, int key)
 {
+    // Null check
+    assert(q && q->private);
+
     queue_private* private_q = q->private;
     push_back(private_q->list, key);
 }
 
 int dequeue(queue* q)
 {
+    // Null check
+    assert(q && q->private);
+
     queue_private* private_q = q->private;
     return pop_front(private_q->list);
 }
 
 bool empty_queue(queue* q)
 {
+    // Null check
+    assert(q && q->private);
+
     queue_private* private_q = q->private;
     return (empty(private_q->list));
 }
 
 void destroy_queue(queue* q)
 {
+    // Null check
+    assert(q && q->private);
+
     queue_private* private_q = q->private;
     destroy(private_q->list);
     free(q->private);
