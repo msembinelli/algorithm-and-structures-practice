@@ -24,7 +24,7 @@ typedef struct
 /*****************************************************************************
  *                             Public Prototypes                             *
  *****************************************************************************/
-queue* init(int size);
+queue* init(int capacity);
 void enqueue(queue* q, int data);
 int dequeue(queue* q);
 bool empty(queue* q);

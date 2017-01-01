@@ -22,21 +22,23 @@ typedef struct
     int head;
     int tail;
     int size;
+    int capacity;
 } queue_private;
 
 /*****************************************************************************
  *                             Public Definitions                            *
  *****************************************************************************/
-queue* init(int size)
+queue* init(int capacity)
 {
     // Must be power of two to use enqueue and dequeue wrap around property
-    assert(!(size % 2));
+    assert(!(capacity % 2));
 
     queue_private* q_p = (queue_private*) malloc(sizeof(queue_private));
-    q_p->buffer = (int*) malloc(sizeof(int) * size);
-    q_p->head = -1;
-    q_p->tail = -1;
-    q_p->size = size;
+    q_p->buffer = (int*) malloc(sizeof(int) * capacity);
+    q_p->head = 0;
+    q_p->tail = 0;
+    q_p->size = 0;
+    q_p->capacity = capacity;
 
     queue* q = (queue*) malloc(sizeof(queue));
     q->private = q_p;
@@ -46,41 +48,58 @@ queue* init(int size)
 
 void enqueue(queue* q, int data)
 {
+    // Null check
+    assert(q);
+
     queue_private* q_p = q->private;
 
     // If queue is full, blow up
     assert(!full(q));
 
-    q_p->head = (q_p->head + 1) & (q_p->size - 1);
     q_p->buffer[q_p->head] = data;
+    q_p->head = (q_p->head + 1) & (q_p->capacity - 1);
+    q_p->size++;
 }
 
 int dequeue(queue* q)
 {
+    // Null check
+    assert(q);
+
     queue_private* q_p = q->private;
 
     // If queue is empty, blow up
     assert(!empty(q));
 
-    q_p->tail = (q_p->tail + 1) & (q_p->size - 1);
     int data = q_p->buffer[q_p->tail];
+    q_p->tail = (q_p->tail + 1) & (q_p->capacity - 1);
+    q_p->size--;
     return data;
 }
 
 bool empty(queue* q)
 {
+    // Null check
+    assert(q);
+
     queue_private* q_p = q->private;
-    return (q_p->head == q_p->tail);
+    return (!q_p->size);
 }
 
 bool full(queue* q)
 {
+    // Null check
+    assert(q);
+
     queue_private* q_p = q->private;
-    return ((q_p->head - q_p->size) == q_p->tail);
+    return (q_p->size == q_p->capacity);
 }
 
 void destroy(queue* q)
 {
+    // Null check
+    assert(q);
+
     queue_private* q_p = q->private;
     free(q_p->buffer);
     q_p->buffer = NULL;
