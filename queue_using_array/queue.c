@@ -31,7 +31,7 @@ typedef struct
 queue* init(int capacity)
 {
     // Must be power of two to use enqueue and dequeue wrap around property
-    assert(!(capacity % 2));
+    assert(((capacity & (capacity - 1)) == 0));
 
     queue_private* q_p = (queue_private*) malloc(sizeof(queue_private));
     q_p->buffer = (int*) malloc(sizeof(int) * capacity);
