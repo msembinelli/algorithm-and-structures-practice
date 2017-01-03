@@ -168,7 +168,8 @@ bool bst_valid(binary_search_tree* bst)
 
 /*****************************************************************************
  *                            Private Definitions                            *
- *****************************************************************************/static void delete_tree_recursive(node** root_ptr)
+ *****************************************************************************/
+static void delete_tree_recursive(node** root_ptr)
 {
     if(NULL == *root_ptr)
     {
