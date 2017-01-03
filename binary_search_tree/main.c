@@ -65,6 +65,13 @@ int main(void)
     bst_delete_node(bst, 2);
     bst_print_values(bst);
 
+    bst_insert_node(bst, 2);
+    bst_insert_node(bst, 4);
+    bst_insert_node(bst, 6);
+    bst_insert_node(bst, 3);
+    bst_insert_node(bst, 1);
+    bst_insert_node(bst, 0);
+
     bst_destroy(bst);
     return 0;
 }

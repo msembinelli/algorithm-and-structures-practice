@@ -37,7 +37,7 @@ typedef struct
 /*****************************************************************************
  *                             Private Prototypes                            *
  *****************************************************************************/
-static void delete_tree_recursive(node* root);
+static void delete_tree_recursive(node** root);
 static void insert_node_recursive(node** root, int data);
 static void delete_node_recursive(node** parent_ptr,
         node** root_ptr, int data);
@@ -79,7 +79,7 @@ void bst_destroy(binary_search_tree* bst)
     binary_search_tree_private* bst_p = bst->private;
 
     // Delete tree recursively
-    delete_tree_recursive(bst_p->root);
+    delete_tree_recursive(&bst_p->root);
 
     free(bst_p);
     bst_p = NULL;
@@ -168,23 +168,21 @@ bool bst_valid(binary_search_tree* bst)
 
 /*****************************************************************************
  *                            Private Definitions                            *
- *****************************************************************************/static void delete_tree_recursive(node* root)
+ *****************************************************************************/static void delete_tree_recursive(node** root_ptr)
 {
-    if(NULL == root)
+    if(NULL == *root_ptr)
     {
         return;
     }
 
-    if(NULL == root->left && NULL == root->right)
-    {
-        free(root);
-        root = NULL;
-    }
-    else
-    {
-        delete_tree_recursive(root->left);
-        delete_tree_recursive(root->right);
-    }
+    node* root = *root_ptr;
+
+    delete_tree_recursive(&root->left);
+    delete_tree_recursive(&root->right);
+
+    *root_ptr = NULL;
+    free(root);
+    root = NULL;
 }
 
 static void insert_node_recursive(node** root_ptr, int data)
