@@ -1,9 +1,9 @@
 /*****************************************************************************
  * main.c
- * This file tests the implementation of the linked list.
+ * This file tests the implementation of the binary search tree.
  *
  * Matthew Sembinelli
- * December 21, 2016
+ * January 2, 2017
  *****************************************************************************/
 
 /*****************************************************************************
