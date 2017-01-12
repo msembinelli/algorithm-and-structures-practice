@@ -50,11 +50,11 @@ void merge(int lo, int mid, int hi)
     // Take care of last elements
     while(i <= mid)
     {
-        merge_array[k] = array[i++];
+        merge_array[k++] = array[i++];
     }
     while(j <= hi)
     {
-        merge_array[k] = array[j++];
+        merge_array[k++] = array[j++];
     }
 
     for(i = lo; i <= hi; i++)
