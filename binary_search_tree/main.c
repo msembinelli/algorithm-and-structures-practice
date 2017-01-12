@@ -30,6 +30,8 @@ int main(void)
     bst_insert_node(bst, 6);
     bst_print_values(bst);
 
+    bst_print_values_in_range(bst, 4, 6);
+
     printf("NODE COUNT: %d\n", bst_node_count(bst));
     printf("DEPTH: %d\n", bst_get_height(bst));
     printf("MAX: %d\n", bst_get_max(bst));

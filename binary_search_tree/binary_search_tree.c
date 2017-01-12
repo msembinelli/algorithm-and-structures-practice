@@ -42,6 +42,7 @@ static void insert_node_recursive(node** root, int data);
 static void delete_node_recursive(node** parent_ptr,
         node** root_ptr, int data);
 static void print_tree_recursive(node* root);
+static void print_range_recursive(node* root, int lo, int hi);
 static int get_height_recursive(node* root, int height);
 static bool node_exists_recursive(node* root, int data);
 static bool tree_valid_recursive(node* root);
@@ -116,6 +117,21 @@ void bst_print_values(binary_search_tree* bst)
     }
 
     print_tree_recursive(bst_p->root);
+}
+
+void bst_print_values_in_range(binary_search_tree* bst, int lo, int hi)
+{
+    assert(bst);
+    binary_search_tree_private* bst_p = bst->private;
+
+    printf("PRINT VALS IN RANGE %d to %d. Inclusive\n", lo, hi);
+    if(NULL == bst_p->root)
+    {
+        printf("EMPTY\n");
+        return;
+    }
+
+    print_range_recursive(bst_p->root, lo, hi);
 }
 
 int bst_node_count(binary_search_tree* bst)
@@ -347,6 +363,56 @@ static void print_tree_recursive(node* root)
     printf("%d\n", root->data);
     fflush(stdout);
     print_tree_recursive(root->right);
+}
+
+static void print_range_recursive(node* root, int lo, int hi)
+{
+    if(root == NULL)
+    {
+        return;
+    }
+
+    if(root->left != NULL)
+    {
+        if(root->left->data >= lo && root->left->data <= hi)
+        {
+            print_range_recursive(root->left, lo, hi);
+        }
+        else if(root->left->data < lo)
+        {
+            // The right subtree could still satisfy the range
+            print_range_recursive(root->left->right, lo, hi);
+        }
+        else if(root->left->data > hi)
+        {
+            // Left subtree could still satisfy the range
+            print_range_recursive(root->left->left, lo, hi);
+        }
+    }
+
+    if(root->data <= hi && root->data >= lo)
+    {
+        printf("%d\n", root->data);
+        fflush(stdout);
+    }
+
+    if(root->right != NULL)
+    {
+        if(root->right->data >= lo && root->right->data <= hi)
+        {
+            print_range_recursive(root->right, lo, hi);
+        }
+        else if(root->right->data < lo)
+        {
+            // The right subtree could still satisfy the range
+            print_range_recursive(root->right->right, lo, hi);
+        }
+        else if(root->right->data > hi)
+        {
+            // Left subtree could still satisfy the range
+            print_range_recursive(root->right->left, lo, hi);
+        }
+    }
 }
 
 static int get_height_recursive(node* root, int height)

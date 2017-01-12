@@ -29,6 +29,7 @@ void bst_destroy(binary_search_tree* bst);
 void bst_insert_node(binary_search_tree* bst, int data);
 void bst_delete_node(binary_search_tree* bst, int data);
 void bst_print_values(binary_search_tree* bst);
+void bst_print_values_in_range(binary_search_tree* bst, int lo, int hi); //range inclusive
 int bst_node_count(binary_search_tree* bst);
 int bst_get_height(binary_search_tree* bst);
 int bst_get_min(binary_search_tree* bst);
