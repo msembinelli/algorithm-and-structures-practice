@@ -2,6 +2,8 @@
  * main.c
  * This file tests and implements binary search on a sorted array.
  *
+ * Runtime: log(n)
+ *
  * Matthew Sembinelli
  * January 1, 2017
  *****************************************************************************/
